@@ -1,134 +1,143 @@
 # Navegación de Robot Autónomo mediante Geometría Computacional
 
-Este repositorio contiene el análisis matemático, la implementación en Python y el estudio de complejidad algorítmica $T(n)$ para determinar la dirección de giro de un robot autónomo en una bodega a partir de tres puntos en el plano cartesiano 2D.
+Este documento presenta el cálculo de determinantes de orientación en el plano $\mathbb{R}^2$, la clasificación geométrica de giros, la lógica de decisión de navegación para un robot autónomo, la implementación en Python y el análisis de complejidad temporal $T(n)$.
 
 ---
 
-## 1. Fundamentación Matemática y Cálculo de Determinantes
+## 1. Modelo Matemático y Criterio de Decisión
 
-En geometría computacional, dada una secuencia ordenada de tres puntos en el plano $\mathbb{R}^2$:
+Para determinar hacia dónde debe girar un robot autónomo dentro de una bodega, se evalúan tres puntos ordenados en el plano cartesiano:
 
-- $A(x_1, y_1)$: Posición anterior del robot.
-- $B(x_2, y_2)$: Posición actual del robot.
-- $C(x_3, y_3)$: Posición de destino.
+- $a(x_a, y_a)$: Posición actual.
+- $b(x_b, y_b)$: Punto objetivo intermedio.
+- $c(x_c, y_c)$: Punto de destino.
 
-La orientación del trayecto $A \to B \to C$ se determina mediante el **producto cruz en 2D** (equivalente al determinante de orientación) formado por los vectores $\vec{AB} = (x_2 - x_1, y_2 - y_1)$ y $\vec{AC} = (x_3 - x_1, y_3 - y_1)$:
+La orientación del trayecto $a \to b \to c$ se obtiene mediante el determinante:
 
-$$\Delta = \det(A, B, C) = \begin{vmatrix} x_2 - x_1 & y_2 - y_1 \\ x_3 - x_1 & y_3 - y_1 \end{vmatrix} = (x_2 - x_1)(y_3 - y_1) - (y_2 - y_1)(x_3 - x_1)$$
+$$\Delta = (x_b - x_a)(y_c - y_a) - (y_b - y_a)(x_c - x_a)$$
 
-De forma equivalente, mediante coordenadas homogéneas en una matriz de $3 \times 3$:
+### Clasificación Geométrica y Decisión del Robot
 
-$$\Delta = \begin{vmatrix} x_1 & y_1 & 1 \\ x_2 & y_2 & 1 \\ x_3 & y_3 & 1 \end{vmatrix}$$
-
-### Criterio de Clasificación Geométrica (Regla de la Mano Derecha)
-
-- Si $\Delta > 0$: El robot gira hacia la izquierda (**Giro antihorario**).
-- Si $\Delta < 0$: El robot gira hacia la derecha (**Giro horario**).
-- Si $\Delta = 0$: Los tres puntos están alineados sobre la misma recta (**Colineal**, avanza sin girar).
+| Condición del Determinante | Orientación | Decisión de Giro del Robot |
+| :---: | :--- | :--- |
+| $\Delta > 0$ | **Antihorario** | Girar hacia la izquierda |
+| $\Delta < 0$ | **Horario** | Girar hacia la derecha |
+| $\Delta = 0$ | **Colineal** | Continuar en línea recta (sin girar) |
 
 ---
 
-### Desarrollo Paso a Paso por Caso
+## 2. Cálculo Paso a Paso por Caso
 
-#### **Caso 1:** $A(1, 2)$, $B(5, 3)$, $C(3, 7)$
+### **Caso 1:** $a(4, 2)$, $b(5, 3)$, $c(3, 7)$
 
-1. Vectores respecto a $A$:
-   $$\vec{AB} = (5 - 1, 3 - 2) = (4, 1)$$
-   $$\vec{AC} = (3 - 1, 7 - 2) = (2, 5)$$
-2. Cálculo del determinante:
-   $$\Delta_1 = (4)(5) - (1)(2) = 20 - 2 = 18$$
-3. Clasificación: Como $\Delta_1 = 18 > 0$, corresponde a un **Giro antihorario**.
-
----
-
-#### **Caso 2:** $A(2, 1)$, $B(6, 5)$, $C(8, 2)$
-
-1. Vectores respecto a $A$:
-   $$\vec{AB} = (6 - 2, 5 - 1) = (4, 4)$$
-   $$\vec{AC} = (8 - 2, 2 - 1) = (6, 1)$$
-2. Cálculo del determinante:
-   $$\Delta_2 = (4)(1) - (4)(6) = 4 - 24 = -20$$
-3. Clasificación: Como $\Delta_2 = -20 < 0$, corresponde a un **Giro horario**.
+1. Sustitución en la fórmula del determinante:
+   $$\Delta_1 = (5 - 4)(7 - 2) - (3 - 2)(3 - 4)$$
+2. Operaciones aritméticas:
+   $$\Delta_1 = (1)(5) - (1)(-1) = 5 - (-1) = 5 + 1 = 6$$
+3. **Clasificación:** Como $\Delta_1 = 6 > 0$, la orientación es **Antihorario**.
+4. **Decisión del robot:** Girar hacia la **izquierda**.
 
 ---
 
-#### **Caso 3:** $A(1, 1)$, $B(3, 3)$, $C(6, 6)$
+### **Caso 2:** $a(2, 7)$, $b(6, 5)$, $c(8, 2)$
 
-1. Vectores respecto a $A$:
-   $$\vec{AB} = (3 - 1, 3 - 1) = (2, 2)$$
-   $$\vec{AC} = (6 - 1, 6 - 1) = (5, 5)$$
-2. Cálculo del determinante:
-   $$\Delta_3 = (2)(5) - (2)(5) = 10 - 10 = 0$$
-3. Clasificación: Como $\Delta_3 = 0$, los puntos son **Colineales**.
+1. Sustitución en la fórmula del determinante:
+   $$\Delta_2 = (6 - 2)(2 - 7) - (5 - 7)(8 - 2)$$
+2. Operaciones aritméticas:
+   $$\Delta_2 = (4)(-5) - (-2)(6) = -20 - (-12) = -20 + 12 = -8$$
+3. **Clasificación:** Como $\Delta_2 = -8 < 0$, la orientación es **Horario**.
+4. **Decisión del robot:** Girar hacia la **derecha**.
 
 ---
 
-#### **Caso 4:** $A(0, 4)$, $B(5, 4)$, $C(3, 1)$
+### **Caso 3:** $a(1, 7)$, $b(3, 3)$, $c(6, 6)$
 
-1. Vectores respecto a $A$:
-   $$\vec{AB} = (5 - 0, 4 - 4) = (5, 0)$$
-   $$\vec{AC} = (3 - 0, 1 - 4) = (3, -3)$$
-2. Cálculo del determinante:
+1. Sustitución en la fórmula del determinante:
+   $$\Delta_3 = (3 - 1)(6 - 7) - (3 - 7)(6 - 1)$$
+2. Operaciones aritméticas:
+   $$\Delta_3 = (2)(-1) - (-4)(5) = -2 - (-20) = -2 + 20 = 18$$
+3. **Clasificación:** Como $\Delta_3 = 18 > 0$, la orientación es **Antihorario**.
+4. **Decisión del robot:** Girar hacia la **izquierda**.
+
+---
+
+### **Caso 4:** $a(0, 4)$, $b(5, 4)$, $c(3, 1)$
+
+1. Sustitución en la fórmula del determinante:
+   $$\Delta_4 = (5 - 0)(1 - 4) - (4 - 4)(3 - 0)$$
+2. Operaciones aritméticas:
    $$\Delta_4 = (5)(-3) - (0)(3) = -15 - 0 = -15$$
-3. Clasificación: Como $\Delta_4 = -15 < 0$, corresponde a un **Giro horario**.
+3. **Clasificación:** Como $\Delta_4 = -15 < 0$, la orientación es **Horario**.
+4. **Decisión del robot:** Girar hacia la **derecha**.
 
 ---
 
 ### Tabla Resumen de Resultados
 
-| Caso | Punto $A$ (Anterior) | Punto $B$ (Actual) | Punto $C$ (Destino) | Determinante ($\Delta$) | Clasificación de Giro |
-| :---: | :---: | :---: | :---: | :---: | :--- |
-| **Caso 1** | $(1, 2)$ | $(5, 3)$ | $(3, 7)$ | $18$ | Giro antihorario |
-| **Caso 2** | $(2, 1)$ | $(6, 5)$ | $(8, 2)$ | $-20$ | Giro horario |
-| **Caso 3** | $(1, 1)$ | $(3, 3)$ | $(6, 6)$ | $0$ | Colineal |
-| **Caso 4** | $(0, 4)$ | $(5, 4)$ | $(3, 1)$ | $-15$ | Giro horario |
+| Caso | Punto $a$ | Punto $b$ | Punto $c$ | Determinante ($\Delta$) | Orientación | Decisión del Robot |
+| :---: | :---: | :---: | :---: | :---: | :--- | :--- |
+| **Caso 1** | $(4, 2)$ | $(5, 3)$ | $(3, 7)$ | $6$ | Antihorario | Girar a la izquierda |
+| **Caso 2** | $(2, 7)$ | $(6, 5)$ | $(8, 2)$ | $-8$ | Horario | Girar a la derecha |
+| **Caso 3** | $(1, 7)$ | $(3, 3)$ | $(6, 6)$ | $18$ | Antihorario | Girar a la izquierda |
+| **Caso 4** | $(0, 4)$ | $(5, 4)$ | $(3, 1)$ | $-15$ | Horario | Girar a la derecha |
 
 ---
 
-## 2. Implementación en Python
+## 3. Implementación en Python
 
-El algoritmo se encuentra implementado en el archivo `orientacion_robot.py`:
+El código fuente completo se encuentra en el archivo `orientacion_robot.py`:
 
 ```python
 from typing import Tuple
 
 
-def calcular_orientacion(
+def determinar_orientacion(
     a: Tuple[float, float],
     b: Tuple[float, float],
-    c: Tuple[float, float]
-) -> Tuple[float, str]:
+    c: Tuple[float, float],
+) -> str:
     """
-    Calcula el determinante de orientacion 2D para tres puntos A, B y C
-    y clasifica el giro del robot autonomo.
+    Calcula el determinante (xb - xa)(yc - ya) - (yb - ya)(xc - xa)
+    y retorna la orientacion geometrica: 'Antihorario', 'Horario' o 'Colineal'.
     """
-    x1, y1 = a
-    x2, y2 = b
-    x3, y3 = c
+    xa, ya = a
+    xb, yb = b
+    xc, yc = c
 
-    determinante = (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)
+    det = (xb - xa) * (yc - ya) - (yb - ya) * (xc - xa)
 
-    if determinante > 0:
-        clasificacion = "Giro antihorario"
-    elif determinante < 0:
-        clasificacion = "Giro horario"
+    if det > 0:
+        return "Antihorario"
+    elif det < 0:
+        return "Horario"
     else:
-        clasificacion = "Colineal"
-
-    return determinante, clasificacion
+        return "Colineal"
 
 
-if __name__ == "__main__":
-    casos = [
-        ("Caso 1", (1, 2), (5, 3), (3, 7)),
-        ("Caso 2", (2, 1), (6, 5), (8, 2)),
-        ("Caso 3", (1, 1), (3, 3), (6, 6)),
-        ("Caso 4", (0, 4), (5, 4), (3, 1)),
-    ]
+def decidir_giro_robot(
+    a: Tuple[float, float],
+    b: Tuple[float, float],
+    c: Tuple[float, float],
+) -> Tuple[float, str, str]:
+    """
+    Evalua los tres puntos de navegacion y retorna el determinante,
+    la orientacion y la accion de direccion que debe ejecutar el robot.
+    """
+    xa, ya = a
+    xb, yb = b
+    xc, yc = c
+    det = (xb - xa) * (yc - ya) - (yb - ya) * (xc - xa)
 
-    for nombre, a, b, c in casos:
-        det, giro = calcular_orientacion(a, b, c)
-        print(f"{nombre}: A{a}, B{b}, C{c} -> Determinante = {det} | {giro}")
+    orientacion = determinar_orientacion(a, b, c)
+
+    if orientacion == "Antihorario":
+        decision = "Girar a la izquierda"
+    elif orientacion == "Horario":
+        decision = "Girar a la derecha"
+    else:
+        decision = "Continuar en linea recta (sin girar)"
+
+    return det, orientacion, decision
 ```
 
 ### Ejecución
@@ -139,55 +148,47 @@ python orientacion_robot.py
 
 ---
 
-## 3. Análisis de Complejidad Temporal $T(n)$
+## 4. Análisis de Complejidad Temporal $T(n)$
 
-Para determinar la eficiencia computacional del sistema de navegación del robot, se contabilizan las operaciones elementales (asignaciones, operaciones aritméticas, comparaciones y retornos).
+Para hallar la función de tiempo de ejecución $T(n)$, contabilizamos las operaciones elementales (asignaciones, operaciones aritméticas, comparaciones y retornos).
 
-### A. Costo por Evaluación Individual (`calcular_orientacion`)
+### A. Costo por Evaluación Individual (`determinar_orientacion`)
 
-Desglosando línea por línea la función para un triplete de puntos $(A, B, C)$:
-
-1. Desempaquetado de coordenadas (`x1, y1 = a`, `x2, y2 = b`, `x3, y3 = c`): **$6$ operaciones** de asignación.
-2. Cálculo del determinante `(x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1)`:
+1. Desempaquetado de las $3$ tuplas de coordenadas (`xa, ya = a`, `xb, yb = b`, `xc, yc = c`): **$6$ operaciones** de asignación.
+2. Evaluación del determinante `det = (xb - xa) * (yc - ya) - (yb - ya) * (xc - xa)`:
    - $5$ restas aritméticas.
    - $2$ multiplicaciones aritméticas.
-   - $1$ asignación a la variable `determinante`.
-   - Total en esta instrucción: **$8$ operaciones**.
-3. Estructura condicional (`if / elif / else`) y asignación de resultado:
-   - **Mejor caso** ($\Delta > 0$): $1$ comparación + $1$ asignación = **$2$ operaciones**.
-   - **Peor caso** ($\Delta \le 0$): $2$ comparaciones + $1$ asignación = **$3$ operaciones**.
-4. Instrucción `return`: **$1$ operación**.
+   - $1$ asignación en memoria (`det`).
+   - Subtotal: **$8$ operaciones**.
+3. Estructura condicional (`if / elif / else`) y `return`:
+   - **Mejor caso** ($\Delta > 0$): $1$ comparación + $1$ retorno = **$2$ operaciones**.
+   - **Peor caso** ($\Delta \le 0$): $2$ comparaciones + $1$ retorno = **$3$ operaciones**.
 
-Sumando las operaciones elementales para un único caso:
+Sumando las operaciones elementales para un único conjunto de $3$ puntos:
 
-$$T_{\text{mejor}}(1) = 6 + 8 + 2 + 1 = 17$$
+$$T_{\text{mejor}}(1) = 6 + 8 + 2 = 16$$
 
-$$T_{\text{peor}}(1) = 6 + 8 + 3 + 1 = 18$$
+$$T_{\text{peor}}(1) = 6 + 8 + 3 = 17$$
 
-Dado que el número de operaciones no depende del tamaño de entrada, evaluar un giro individual tiene **complejidad constante**:
+Dado que la cantidad de instrucciones es fija y no crece con el tamaño de los datos, cada consulta de giro tiene **complejidad constante**:
 
-$$T_{\text{caso}} \in O(1)$$
+$$T_{\text{consulta}} \in O(1)$$
 
-### B. Costo Total para $n$ Casos de Prueba: $T(n)$
+### B. Costo Total para $n$ Casos o Tramos de Ruta: $T(n)$
 
-Si el algoritmo procesa una lista de $n$ conjuntos de puntos mediante un ciclo iterativo:
+Cuando el sistema de navegación procesa secuencialmente una trayectoria compuesta por $n$ tripletas de puntos:
 
-- Inicialización del ciclo y estructuras de control: $k = 2$ operaciones constantes.
+- Inicialización del ciclo: $k = 2$ operaciones constantes.
 - En cada una de las $n$ iteraciones (peor caso):
-  - Control de iteración y acceso a la tupla: $2$ operaciones.
-  - Ejecución de `calcular_orientacion`: $18$ operaciones.
-  - Formateo e impresión de salida: $1$ operación.
-  - Total por iteración: $c = 21$ operaciones elementales.
+  - Control de ciclo y lectura de la tupla: $2$ operaciones.
+  - Llamada a `determinar_orientacion`: $17$ operaciones.
+  - Selección de acción del robot y salida: $2$ operaciones.
+  - Costo por iteración: $c = 21$ operaciones elementales.
 
-Por lo tanto, la función exacta de tiempo de ejecución en el peor caso es:
+La función exacta de complejidad temporal en el peor caso es:
 
 $$T(n) = 21n + 2$$
 
-Aplicando análisis asintótico (descartando constantes multiplicativas y términos de menor orden), la complejidad temporal del algoritmo es **lineal**:
+Aplicando notación asintótica Big $O$, el algoritmo presenta **complejidad temporal lineal**:
 
 $$T(n) \in O(n)$$
-
-### C. Complejidad Espacial $S(n)$
-
-- **Por consulta en tiempo real (streaming del robot):** $S(1) \in O(1)$, ya que solo se almacenan variables escalares temporales en memoria.
-- **Para un lote almacenado de $n$ casos:** $S(n) \in O(n)$, proporcional a la cantidad de coordenadas guardadas en la lista de entrada.
